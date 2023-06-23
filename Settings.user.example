@@ -1,0 +1,11 @@
+INSTRUCTIONS=Enter the missing information. Copy or rename this file to Settings.user before running the program. 
+NOTE=Setting.user will not be comitted to repo when you use git push. 
+HOST=localhost
+PORT=5432
+DATABASE=dbname
+USERNAME=username
+APIURL=https://api.openai.com/v1/completions
+MODEL=text-davinci-003
+MAX_TOKENS=1000
+TEMPERATURE=0.5
+PROMPT=Generate 3 random topic multiple-choice quiz questions with correct answers. Format the quiz in valid JSON format. Use the following JSON format but replace single quotes with double quotes: {'Question 1':{'Question':'Sample question?','Options':{'A':'Sample answer 1','B':'Sample answer 2','C':'Sample answer 3','D':'Sample answer 4'},'Answer':'B'}}
