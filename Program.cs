@@ -5,7 +5,7 @@ internal partial class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // Read the OpenAi Api Key and Database Password from environment variable that you set with dotnet user-secrets set command.
-        //string openAiApiKey = builder.Configuration["OpenAI:APIKey"] ?? String.Empty;
+        string openAiApiKey = builder.Configuration["OpenAI:APIKey"] ?? String.Empty;
         string pgsqlDbPassword = builder.Configuration["PGSQL:DbPassword"] ?? String.Empty;
         
         Dictionary<string, string>? settings = GetSettings(); // Declare a dictionary variable to load and store the settings from Settings.user file
@@ -15,16 +15,35 @@ internal partial class Program
 
         var app = builder.Build();
 
-       
+        // Display README.txt eg: http://localhost:5000/
         app.MapGet("/", () =>
         {
             string readmeContents = File.ReadAllText("README.txt");
             return readmeContents;
-        });  // Display README.txt eg: http://localhost:5000/
+        });  
      
         app.MapGet("/users", () => GetUsers(connectionString)); // Display all the users in the table in JSON format eg: http://localhost:5000/users
 
+        // Display the OpenAI generated Quiz as JSON but does not store it anywhere. Refreshing the page will re-generate new quiz.
+        app.MapGet("/generatequiz", () =>
+        {
+            return GenerateQuiz(
+        openAiApiKey, 
+        settings["APIURL"], 
+        settings["PROMPT"], 
+        settings["MODEL"]);
+        });
 
+        // Add the OpenAI generated Quiz to database and return it as JSON as well
+        app.MapGet("/generateandstorequiz", () =>
+        {
+            return GenerateAndStoreQuiz(
+        openAiApiKey, 
+        settings["APIURL"], 
+        settings["PROMPT"], 
+        settings["MODEL"],
+        connectionString);
+        });
 
         //  Display specific user info. Using route parameters in the URL eg: http://localhost:5000/user/tateclinton
         app.MapGet("/user/{loginname}", (string loginname) => GetUserByLoginName(loginname, connectionString));
