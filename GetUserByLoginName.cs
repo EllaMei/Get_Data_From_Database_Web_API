@@ -3,7 +3,7 @@ using Npgsql;
 internal partial class Program
 {
 
-    public static string? GetUserById(int userId, string connectionString)
+    public static string? GetUserByLoginName(string loginname, string connectionString)
     {           
 
        
@@ -12,28 +12,28 @@ internal partial class Program
            
             connection.Open(); // Open the database connection
 
-            if (userId <= 0) // Check ID greater than 0
+            if (string.IsNullOrEmpty(loginname)) // Check that a value is supplied
             {
                 connection.Close();
                 return "ERROR: Must be greater than 0";
             }
 
 
-            using (NpgsqlCommand command = new NpgsqlCommand("SELECT id, first_name, last_name FROM quiz_users WHERE id=@userId", connection))
+            using (NpgsqlCommand command = new NpgsqlCommand("SELECT login_name, first_name, last_name FROM quiz_users WHERE login_name=@loginName", connection))
             {
-                command.Parameters.AddWithValue("@userId", NpgsqlTypes.NpgsqlDbType.Integer, userId);
+                command.Parameters.AddWithValue("@loginName", NpgsqlTypes.NpgsqlDbType.Text, loginname);
                 using (NpgsqlDataReader reader = command.ExecuteReader())
                 {
                     if (reader.Read())
                     {
-                        int id = reader.GetInt32(0);
+                        string loginName = reader.GetString(0);
                         string firstName = reader.GetString(1);
                         string lastName = reader.GetString(2);
 
                         // Create a JSON object
                         var userObject = new
                         {
-                            Id = id,
+                            LoginName = loginName,
                             FirstName = firstName,
                             LastName = lastName
                         };
