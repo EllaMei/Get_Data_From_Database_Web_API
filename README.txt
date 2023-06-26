@@ -57,6 +57,13 @@ GET
 > Same as above but using query parameters
 
 
+/generatequiz
+> Returns the OpenAI generated quiz content as JSON but does not store it anywhere.
+
+/generateandstorequiz
+> Stores the OpenAI generated quiz content into Postgres and then returns it as JSON.
+Requires the following to be set: dotnet user-secrets set "OpenAI:APIKey" "Your-API-Key"
+
 
 POST
 ----

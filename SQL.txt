@@ -1,0 +1,15 @@
+Questions with correct answers
+==============================
+SELECT quiz_questions.id, quiz_questions.question_text, quiz_options.option_name, quiz_options.option_text
+FROM (quiz_questions INNER JOIN quiz_options ON quiz_questions.id = quiz_options.id) 
+INNER JOIN quiz_answers ON (quiz_options.option_name = quiz_answers.answer_name) AND (quiz_questions.id = quiz_answers.id);
+
+Question Answer
+===============
+SELECT quiz_questions.id, quiz_answers.answer_name
+FROM quiz_questions INNER JOIN quiz_answers ON quiz_questions.id = quiz_answers.id;
+
+SELECT questions.id, answers.answer_name FROM quiz_questions questions INNER JOIN quiz_answers answers ON questions.id = answers.id;
+
+SELECT questions.id, answers.answer_name FROM quiz_questions questions INNER JOIN quiz_answers answers ON questions.id=@questionid = answers.id;
+

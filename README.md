@@ -50,6 +50,15 @@ Returns true or false depending on the supplied question id and option chosen.<b
 /checkanswer?questionid=22&optionname=b<br>
 Same as above but using query parameters.<br><br>
 
+
+/generatequiz<br>
+Returns the OpenAI generated quiz content as JSON but does not store it anywhere.<br><br>
+
+/generateandstorequiz<br>
+Stores the OpenAI generated quiz content into Postgres and then returns it as JSON.Requires the following to be set:<br>
+dotnet user-secrets set "OpenAI:APIKey" "Your-API-Key"<br><br>
+
+
 POST<br>
 ----
 <em>Use Thuunder Client for testing the POST routes</em><br>
