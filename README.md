@@ -68,3 +68,6 @@ Inserts the values into history then returns true or false depending on the supp
 
 /recordanswer?loginname=fredkhan&questionid=29&optionname=b<br>
 Same as above but using query parameters.<br><br>
+
+/adduser?loginname=anhnguyen&firstname=Anh&lastname=nguyen<br>
+> Adds 1 user using query parameters and returns the values that was added to quiz_users table.<br><br>

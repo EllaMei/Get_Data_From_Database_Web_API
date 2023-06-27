@@ -74,3 +74,6 @@ Use Thuunder Client for testing the POST routes
 
 /recordanswer?loginname=fredkhan&questionid=29&optionname=b
 > Same as above but using query parameters.
+
+/adduser?loginname=anhnguyen&firstname=Anh&lastname=nguyen
+> Adds 1 user using query parameters and returns the values that was added to quiz_users table.
