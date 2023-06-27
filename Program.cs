@@ -52,6 +52,24 @@ internal partial class Program
         app.MapGet("/user", (string loginname) => GetUserByLoginName(loginname, connectionString));
 
  
+        //  Insert user to quiz users table. Using query parameters in the URL eg: http://localhost:5000/adduser?loginname=anhnguyen&firstname=anh&lastname=nguyen
+        app.MapPost("/adduser", async (context) =>
+        {
+            string? loginname = context.Request.Query["loginname"];
+            string? firstname = context.Request.Query["firstname"];
+            string? lastname = context.Request.Query["lastname"];
+
+            string? result = null;
+            if (!string.IsNullOrEmpty(loginname) && !string.IsNullOrEmpty(firstname) && !string.IsNullOrEmpty(lastname))
+            {
+
+                result = await AddUser(loginname, firstname, lastname, connectionString);
+            }
+
+            await context.Response.WriteAsync(result ?? string.Empty);
+        });
+
+
  
         //  Display True or False. Using route parameters in the URL eg: http://localhost:5000/checkanswer/21/b
         app.MapGet("/checkanswer/{questionid}/{optionname}", (int questionid, char optionname) => CheckAnswer(questionid, Char.ToUpper(optionname), connectionString));

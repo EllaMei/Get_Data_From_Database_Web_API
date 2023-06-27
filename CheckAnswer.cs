@@ -32,7 +32,7 @@ internal partial class Program
                             Result = result
                         };
 
-                       string jsonResponse = JsonConvert.SerializeObject(answerObject);
+                        string jsonResponse = JsonConvert.SerializeObject(answerObject);
 
                         return jsonResponse;
                     }
