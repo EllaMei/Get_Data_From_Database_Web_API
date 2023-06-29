@@ -1,0 +1,41 @@
+function GetQuiz(connectionString):
+    Create an empty list called quizList
+
+    Create a new NpgsqlConnection object with the provided connectionString
+
+    Open the connection
+
+    Create a new NpgsqlCommand object with the SQL query and the connection
+
+    Execute the command and obtain a NpgsqlDataReader object
+
+    while there are rows to read in the reader:
+        Read the values from the reader for id, questionText, optionName, and optionText
+
+        Create a new object with the properties ID, QuestionText, OptionName, and OptionText using the read values
+
+        Add the created object to the quizList
+
+    Close the reader, the command, and the connection
+
+    Serialize the quizList to a JSON string using the JsonConvert class
+
+    Return the JSON string
+
+end function
+
+
+Dictionary<int, Dictionary<string, string>> quizDict = new Dictionary<int, Dictionary<string, string>>();
+
+That line of code is declaring and initializing a variable called quizDict. Let's break it down:
+
+Dictionary<int, Dictionary<string, string>> is the type declaration of the variable. It specifies that quizDict is a dictionary with keys of type int and values of type Dictionary<string, string>.
+quizDict is the name of the variable.
+new Dictionary<int, Dictionary<string, string>>() is the initialization part. It creates a new instance of the Dictionary<int, Dictionary<string, string>> class and assigns it to the quizDict variable.
+To understand this line in more detail, let's look at the structure of the quizDict dictionary:
+
+The keys of quizDict are of type int and represent the question IDs.
+The values of quizDict are of type Dictionary<string, string>, which is another dictionary. This inner dictionary represents the options for each question.
+The keys of the inner dictionary are of type string and represent the option names (e.g., "A", "B", "C", "D").
+The values of the inner dictionary are also of type string and represent the option texts (e.g., "Vancouver", "Ottawa", "Toronto", "Montreal").
+So, quizDict is a data structure that allows you to store and retrieve quiz data based on the question ID and the corresponding options. It serves as a temporary storage while retrieving data from the database before transforming it into the desired format.

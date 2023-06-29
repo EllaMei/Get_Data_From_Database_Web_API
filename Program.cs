@@ -70,6 +70,17 @@ internal partial class Program
         });
 
 
+
+        // Return json of all questions and options eg: http://localhost:5000/getquiz
+        app.MapGet("/getquiz", () => GetQuiz(connectionString));
+
+        // Return json of unattempted questions and options eg: http://localhost:5000/getnewquiz?loginname=fredkhan
+        app.MapGet("/getnewquiz", (string loginname) => GetNewQuiz(loginname, connectionString));
+
+        // Return json of attempted questions and options eg: http://localhost:5000/getnewquiz?loginname=fredkhan
+        app.MapGet("/getoldquiz", (string loginname) => GetOldQuiz(loginname, connectionString));
+
+
  
         //  Display True or False. Using route parameters in the URL eg: http://localhost:5000/checkanswer/21/b
         app.MapGet("/checkanswer/{questionid}/{optionname}", (int questionid, char optionname) => CheckAnswer(questionid, Char.ToUpper(optionname), connectionString));

@@ -56,7 +56,7 @@ internal partial class Program
                 }
                 catch (Exception ex) // Handle the exception during deserialisation
                 {
-                    Console.WriteLine("\nERROR: An error occurred during deserialization from OpenAI: " + ex.Message);
+                    Console.WriteLine($"\nERROR: An error occurred during deserialization from OpenAI: {ex.Message}");
                 }
             }
             else // Response statuscocde indicates an error. Display the statuscode
