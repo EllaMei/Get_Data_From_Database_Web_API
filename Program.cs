@@ -70,7 +70,7 @@ internal partial class Program
         });
 
         //Return all questions, options and user's answers for completed questions
-        app.MapGet("/getalloldquiz", () => GetAllOldQuiz(loginname, connectionString));
+        app.MapGet("/getalloldquiz", (string loginname) => GetAllOldQuiz(loginname, connectionString));
 
         // Return json of all questions and options eg: http://localhost:5000/getquiz
         app.MapGet("/getquiz", () => GetQuiz(connectionString));

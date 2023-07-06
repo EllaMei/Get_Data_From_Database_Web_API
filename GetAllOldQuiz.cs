@@ -13,13 +13,15 @@ internal partial class Program
             // TODO: Use parameter query for the NOT in not null
             // Define the SQL query to retrieve quiz data from the database
             using (NpgsqlCommand command = new NpgsqlCommand(@"SELECT quiz_questions.id, quiz_questions.question_text, 
-                                                                quiz_options.option_name, quiz_options.option_text, quiz_history.option_name user_answer
+                                                                quiz_options.option_name, quiz_options.option_text, quiz_history.option_name user_answer, quiz_answers.answer_name answer
                                                                 FROM (quiz_questions LEFT JOIN 
-                                                                        (SELECT question_id, option_name FROM quiz_history 
-                                                                        WHERE login_name = @loginName)
-                                                                AS quiz_history ON quiz_questions.id = quiz_history.question_id) 
+                                                                      (SELECT question_id, option_name FROM quiz_history 
+                                                                      WHERE login_name = @loginName)
+                                                                AS quiz_history 
+																	  ON quiz_questions.id = quiz_history.question_id) 
                                                                 INNER JOIN quiz_options ON quiz_questions.id = quiz_options.id
-                                                                WHERE (((quiz_history.question_id) Is Not Null));", connection))
+																INNER JOIN quiz_answers ON quiz_options.id = quiz_answers.id
+																WHERE (((quiz_history.question_id) Is Not Null));", connection))
             {
                 command.Parameters.AddWithValue("@loginName", NpgsqlTypes.NpgsqlDbType.Text, loginname);
                 using (NpgsqlDataReader reader = command.ExecuteReader())
@@ -35,6 +37,7 @@ internal partial class Program
                         string optionName = reader.GetString(2); // Retrieve the option name from the third column.
                         string optionText = reader.GetString(3); // Retrieve the option text from the fourth column.
                         string userAnswer = reader.GetString(4); //Retrieve the user answer for the question.
+                        string correctAnswer = reader.GetString(5); //Retireve the correct answer for the question.
 
                         
 
@@ -46,7 +49,8 @@ internal partial class Program
                             {
                                 { "QuestionText", questionText }, // Add the question text to the dictionary under the key "QuestionText"
                                 { optionName, optionText }, // Add the option text to the dictionary using the option name as the key
-                                { "UserAnswer", userAnswer }
+                                { "UserAnswer", userAnswer },
+                                { "CorrectAnswer", correctAnswer }
                             };
                         }
                         else
@@ -72,7 +76,7 @@ internal partial class Program
                         foreach (var optionEntry in entry.Value)
                         {
                             // Exclude the "QuestionText" key when populating the options dictionary
-                            if (optionEntry.Key != "QuestionText" && optionEntry.Key != "UserAnswer")
+                            if (optionEntry.Key != "QuestionText" && optionEntry.Key != "UserAnswer" && optionEntry.Key != "CorrectAnswer")
                             {
                                 var optionName = optionEntry.Key;
                                 var optionText = optionEntry.Value;
@@ -86,6 +90,7 @@ internal partial class Program
                             ID = entry.Key,
                             QuestionText = entry.Value["QuestionText"],
                             UserAnswer = entry.Value["UserAnswer"],
+                            CorrectAnswer = entry.Value["CorrectAnswer"],
                             Options = optionsDict
                         };
 
