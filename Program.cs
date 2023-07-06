@@ -69,7 +69,8 @@ internal partial class Program
             await context.Response.WriteAsync(result ?? string.Empty);
         });
 
-
+        //Return all questions, options and user's answers for completed questions
+        app.MapGet("/getalloldquiz", () => GetAllOldQuiz(loginname, connectionString));
 
         // Return json of all questions and options eg: http://localhost:5000/getquiz
         app.MapGet("/getquiz", () => GetQuiz(connectionString));
