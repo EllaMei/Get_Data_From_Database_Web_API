@@ -52,20 +52,39 @@ internal partial class Program
         app.MapGet("/user", (string loginname) => GetUserByLoginName(loginname, connectionString));
 
  
-        //  Insert user to quiz users table. Using query parameters in the URL eg: http://localhost:5000/adduser?loginname=anhnguyen&firstname=anh&lastname=nguyen
+        //  Insert user to quiz users table. Using query parameters in the URL eg: http://localhost:5000/adduser?loginid=anhnguyen&firstname=anh&lastname=nguyen
         app.MapPost("/adduser", async (context) =>
         {
-            string? loginname = context.Request.Query["loginname"];
+            // Get the value of the "loginid" parameter from the request query string.
+            string? loginid = context.Request.Query["loginid"];
+
+            // Get the value of the "firstname" parameter from the request query string.
             string? firstname = context.Request.Query["firstname"];
+
+            // Get the value of the "lastname" parameter from the request query string.
             string? lastname = context.Request.Query["lastname"];
 
-            string? result = null;
-            if (!string.IsNullOrEmpty(loginname) && !string.IsNullOrEmpty(firstname) && !string.IsNullOrEmpty(lastname))
-            {
+            // Get the value of the "password" parameter from the request query string.
+            string? Password = context.Request.Query["password"];
 
-                result = await AddUser(loginname, firstname, lastname, connectionString);
+            // Check if any of the required parameters (loginid, firstname, lastname) are missing or empty.
+            if (string.IsNullOrEmpty(loginid) || string.IsNullOrEmpty(firstname) || string.IsNullOrEmpty(lastname)|| string.IsNullOrEmpty(Password))
+            {
+                // Set the HTTP response status code to 400 (Bad Request).
+                context.Response.StatusCode = 418;
+
+                // Write an error message to the response.
+                await context.Response.WriteAsync("One or more parameters are missing.");
+
+                // Exit the function early.
+                return;
             }
 
+            // Call the "AddUser" method, passing the "loginid", "firstname", "lastname", and "connectionString" parameters.
+            // Await the method's asynchronous execution and assign the returned value to "result".
+            string? result = await AddUser(loginid, firstname, lastname, Password,connectionString);
+
+            // Write the value of "result" to the response, or an empty string if "result" is null.
             await context.Response.WriteAsync(result ?? string.Empty);
         });
 
