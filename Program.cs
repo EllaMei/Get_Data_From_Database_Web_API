@@ -56,22 +56,22 @@ internal partial class Program
         app.MapPost("/adduser", async (context) =>
         {
             // Get the value of the "loginid" parameter from the request query string.
-            string? loginid = context.Request.Query["loginid"];
+            string? LoginId = context.Request.Query["loginid"];
 
             // Get the value of the "firstname" parameter from the request query string.
-            string? firstname = context.Request.Query["firstname"];
+            string? FirstName = context.Request.Query["firstname"];
 
             // Get the value of the "lastname" parameter from the request query string.
-            string? lastname = context.Request.Query["lastname"];
+            string? LastName = context.Request.Query["lastname"];
 
             // Get the value of the "password" parameter from the request query string.
             string? Password = context.Request.Query["password"];
 
             // Check if any of the required parameters (loginid, firstname, lastname) are missing or empty.
-            if (string.IsNullOrEmpty(loginid) || string.IsNullOrEmpty(firstname) || string.IsNullOrEmpty(lastname)|| string.IsNullOrEmpty(Password))
+            if (string.IsNullOrEmpty(LoginId) || string.IsNullOrEmpty(FirstName) || string.IsNullOrEmpty(LastName)|| string.IsNullOrEmpty(Password))
             {
                 // Set the HTTP response status code to 400 (Bad Request).
-                context.Response.StatusCode = 418;
+                context.Response.StatusCode = 400;
 
                 // Write an error message to the response.
                 await context.Response.WriteAsync("One or more parameters are missing.");
@@ -82,7 +82,7 @@ internal partial class Program
 
             // Call the "AddUser" method, passing the "loginid", "firstname", "lastname", and "connectionString" parameters.
             // Await the method's asynchronous execution and assign the returned value to "result".
-            string? result = await AddUser(loginid, firstname, lastname, Password,connectionString);
+            string? result = await AddUser(LoginId, FirstName, LastName, Password,connectionString);
 
             // Write the value of "result" to the response, or an empty string if "result" is null.
             await context.Response.WriteAsync(result ?? string.Empty);
