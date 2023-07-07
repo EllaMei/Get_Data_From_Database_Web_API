@@ -162,6 +162,46 @@ internal partial class Program
 
 
 
+
+        //  Update user to quiz users table. Using query parameters in the URL eg: http://localhost:5000/updateuser?loginid=anhnguyen&firstname=anh&lastname=nguyen&password
+            app.MapPut("/updateuser", async (context) =>
+            {
+            // Get the value of the "loginid" parameter from the request query string.
+            string? LoginId = context.Request.Query["login_id"];
+
+            // Get the value of the "firstname" parameter from the request query string.
+            string? FirstName = context.Request.Query["first_name"];
+
+            // Get the value of the "lastname" parameter from the request query string.
+            string? LastName = context.Request.Query["last_name"];
+
+            // Get the value of the "lastname" parameter from the request query string.
+            string? Password = context.Request.Query["password_hash"];
+
+            // Check if any of the required parameters (loginid, firstname, lastname) are missing or empty.
+            if (string.IsNullOrEmpty(LoginId)||string.IsNullOrEmpty(FirstName) || string.IsNullOrEmpty(LastName) || string.IsNullOrEmpty(Password))
+            {
+                // Set the HTTP response status code to 400 (Bad Request).
+                context.Response.StatusCode = 418;
+
+                // Write an error message to the response.
+                await context.Response.WriteAsync("One or more parameters are missing.");
+
+                // Exit the function early.
+                return;
+            }
+
+            // Call the "UpdateUser" method, passing the "loginid", "firstname", "lastname", and "connectionString" parameters.
+            // Await the method's asynchronous execution and assign the returned value to "result".
+            string? result = await UpdateUser( LoginId, FirstName, LastName, Password, connectionString);
+
+            // Write the value of "result" to the response, or an empty string if "result" is null.
+            await context.Response.WriteAsync(result ?? string.Empty);
+        });
+
+
+
+
         app.Run();
     }
 }
