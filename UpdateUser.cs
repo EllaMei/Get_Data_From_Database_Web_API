@@ -5,6 +5,15 @@ internal partial class Program
 {
     public static async Task<string?> UpdateUser( string LoginId, string FirstName, string LastName, string Password, string connectionString)
     {
+
+         // Validate input parameters
+        if (string.IsNullOrEmpty(LoginId) || string.IsNullOrEmpty(FirstName) || string.IsNullOrEmpty(LastName) || string.IsNullOrEmpty(Password))
+        {
+            return "One or more parameters are missing";
+        }
+
+
+
         //convert the loginid to lowercase
         LoginId = LoginId.ToLower();
 
