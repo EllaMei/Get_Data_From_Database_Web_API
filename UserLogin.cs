@@ -1,34 +1,39 @@
 using Npgsql;
 using BCrypt.Net;
+
 internal partial class Program
 {
     public static async Task<bool> UserLogin(string LoginId, string Password, string connectionString)
     {
-
         try
         {
-            using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+            using NpgsqlConnection connection = new(connectionString);
+            await connection.OpenAsync();
+
+            string SqlStatement = "SELECT password_hash, user_status FROM quiz_users WHERE login_id = @LoginId AND user_status = TRUE";
+
+            using (NpgsqlCommand command = new NpgsqlCommand(SqlStatement, connection))
             {
-                await connection.OpenAsync();
+                command.Parameters.AddWithValue("@LoginId", NpgsqlTypes.NpgsqlDbType.Varchar, LoginId);
 
-                string SqlStatement = "SELECT password_hash FROM quiz_users WHERE login_id = @LoginId";
-
-                using (NpgsqlCommand command = new NpgsqlCommand(SqlStatement, connection))
+                using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
                 {
-                    command.Parameters.AddWithValue("@LoginId", NpgsqlTypes.NpgsqlDbType.Varchar, LoginId);
-
-                    string? hashedPassword = await command.ExecuteScalarAsync() as string;
-
-                   // if(string.IsNullOrEmpty(hashedPassword) && (Password, hashedPassword))
-                    if (hashedPassword != null && BCrypt.Net.BCrypt.Verify(Password, hashedPassword))
+                    if (reader.Read())
                     {
-                        // Login successful
-                        return true;
-                    }
-                    else
-                    {
-                        // Login failed
-                        return false;
+                        string? hashedPassword = reader["password_hash"] as string;
+                        bool UserStatus = Convert.ToBoolean(reader["user_status"]);
+                        
+
+                        if (!UserStatus)
+                        {
+                            return  false;
+                        }
+
+                        if (hashedPassword != null && BCrypt.Net.BCrypt.Verify(Password, hashedPassword))
+                        {
+                            // Login successful
+                            return true;
+                        }
                     }
                 }
             }
@@ -36,14 +41,15 @@ internal partial class Program
         catch (NpgsqlException ex)
         {
             // Handle PostgreSQL-related exceptions
-            ErrorHandler($"An error occurred during login: {ex.Message}");
-            throw; // Re-throw the exception if necessary
+            return ErrorHandler($"An error occurred during login: {ex.Message}");
         }
         catch (Exception ex)
         {
             // Handle other exceptions
-            ErrorHandler($"An unexpected error occurred during login: {ex.Message}");
-            throw; // Re-throw the exception if necessary
+            return ErrorHandler($"An unexpected error occurred during login: {ex.Message}");
         }
+
+        // Login failed
+        return false;
     }
 }

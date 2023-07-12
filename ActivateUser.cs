@@ -1,10 +1,14 @@
 using Npgsql;
 internal partial class Program
 {
-    public static async Task DeactivateUser(string LoginId, string connectionString)
+    public static async Task ActivateUserStatus(string LoginId, string connectionString)
     {
         try
         {
+            if (string.IsNullOrEmpty(LoginId))
+            {
+                ErrorHandler ("Login ID cannot be empty.");
+            }
             using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
             {
                 await connection.OpenAsync();
