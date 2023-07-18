@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using Npgsql;
 internal partial class Program
 {
@@ -5,10 +6,16 @@ internal partial class Program
     {
         try
         {
+
+            if ( string.IsNullOrEmpty( LoginId ) )
+            {
+                return ErrorHandler("Please supply a Login ID");
+            }
+            
             using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
             await connection.OpenAsync();
 
-            string SqlStatement = "SELECT user_status, login_id FROM quiz_users WHERE login_id = @LoginId";
+            string SqlStatement = "SELECT user_status, login_id FROM quiz_users WHERE login_id ILIKE @LoginId";
             using (NpgsqlCommand command = new NpgsqlCommand(SqlStatement, connection))
             {
                 command.Parameters.AddWithValue("@LoginId", NpgsqlTypes.NpgsqlDbType.Varchar, LoginId);

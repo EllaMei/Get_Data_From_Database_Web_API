@@ -48,11 +48,11 @@ internal partial class Program
         //  Display specific user info. Using route parameters in the URL eg: http://localhost:5000/user/tateclinton
         app.MapGet("/user/{loginname}", (string loginname) => GetUserByLoginName(loginname, connectionString));
 
-        // Display specific user info. Using query parameters in the URL eg: http://localhost:5000/user?loginname=tateclinton
+        // Display specific user info. Using query parameters in the URL eg: http://localhost:5000/user?loginname=
         app.MapGet("/user", (string loginname) => GetUserByLoginName(loginname, connectionString));
 
  
-        //  Insert user to quiz users table. Using query parameters in the URL eg: http://localhost:5000/adduser?loginid=anhnguyen&firstname=anh&lastname=nguyen
+        //  Insert user to quiz users table. Using query parameters in the URL eg: http://localhost:5000/adduser?loginid=&firstname=&lastname=
         app.MapPost("/adduser", async (context) =>
         {
             // Get the value of the "loginid" parameter from the request query string.
@@ -94,10 +94,10 @@ internal partial class Program
         // Return json of all questions and options eg: http://localhost:5000/getquiz
         app.MapGet("/getquiz", () => GetQuiz(connectionString));
 
-        // Return json of unattempted questions and options eg: http://localhost:5000/getnewquiz?loginname=fredkhan
+        // Return json of unattempted questions and options eg: http://localhost:5000/getnewquiz?loginname=
         app.MapGet("/getnewquiz", (string loginname) => GetNewQuiz(loginname, connectionString));
 
-        // Return json of attempted questions and options eg: http://localhost:5000/getnewquiz?loginname=fredkhan
+        // Return json of attempted questions and options eg: http://localhost:5000/getnewquiz?loginname=
         app.MapGet("/getoldquiz", (string loginname) => GetOldQuiz(loginname, connectionString));
 
 
@@ -105,7 +105,7 @@ internal partial class Program
         //  Display True or False. Using route parameters in the URL eg: http://localhost:5000/checkanswer/21/b
         app.MapGet("/checkanswer/{questionid}/{optionname}", (int questionid, char optionname) => CheckAnswer(questionid, Char.ToUpper(optionname), connectionString));
 
-        // Display True or False. Using query parameters in the url eg: http://localhost:5000/checkanswer?questionid=21&optionname=b
+        // Display True or False. Using query parameters in the url eg: http://localhost:5000/checkanswer?questionid=&optionname=
         app.MapGet("/checkanswer", (int questionid, char optionname) => CheckAnswer(questionid, Char.ToUpper(optionname), connectionString));
 
 
@@ -137,7 +137,7 @@ internal partial class Program
         });
 
 
-        //  Insert record to quiz history table and returns true or false. Using query parameters in the URL eg: http://localhost:5000/recordanswer?loginname=anhnguyen&questionid=11&optionname=d
+        //  Insert record to quiz history table and returns true or false. Using query parameters in the URL eg: http://localhost:5000/recordanswer?loginname=&questionid=&optionname=
         app.MapPost("/recordanswer", async (context) =>
         {
             string? loginname = context.Request.Query["loginname"];
@@ -163,7 +163,7 @@ internal partial class Program
 
 
 
-        //  Update user to quiz users table. Using query parameters in the URL eg: http://localhost:5000/updateuser?login_id=anhnguyen&first_name=anh&last_name=nguyen&password_hash=123456
+        //  Update user to quiz users table. Using query parameters in the URL eg: http://localhost:5000/updateuser?login_id=&first_name=&last_name=&password_hash=
             app.MapPut("/updateuser", async (context) =>
             {
             // Get the value of the "loginid" parameter from the request query string.
@@ -197,17 +197,17 @@ internal partial class Program
 
             // Write the value of "result" to the response, or an empty string if "result" is null.
             await context.Response.WriteAsync(result ?? string.Empty);
-        });
+            });
 
 
-            //Deactivate users to get access to quiz http://localhost:5000/deactivateuser?loginid=moshsh
-             app.MapPut("/deactivateuser", (string LoginId) => ActivateUserStatus (LoginId ?? string.Empty,connectionString));
+            //Activate users to get access to quiz http://localhost:5000/activateuserstatus?loginid=
+             app.MapPut("/activateuserstatus", (string LoginId) => ActivateUserStatus (LoginId ?? string.Empty,connectionString));
 
 
 
-           //Login endpoint URL eg: http://localhost:5000/userlogin?/login_id=munaali&password_hash=123456
-        app.MapPost("/userlogin", async(context) => 
-        {
+           //UserLogin endpoint URL eg: http://localhost:5000/userlogin?/login_id=&password_hash=
+            app.MapPost("/userlogin", async(context) => 
+             {
             //Get the value of the "LoginId"
             string? LoginId = context.Request.Query["login_id"];
 
@@ -228,9 +228,9 @@ internal partial class Program
 
             await context.Response.WriteAsync(LoginSuccessful ? "Login Successful" : "Login Failed");
             
+
             
             if (!LoginSuccessful && LoginId !=null)
-           // if (!LoginSuccessful && string.IsNullOrEmpty(LoginId))
             {
                 bool UserStatus = await GetUserStatus(LoginId, connectionString);
                 if (!UserStatus)
@@ -238,7 +238,7 @@ internal partial class Program
                     await context.Response.WriteAsync("\nYour Account is deactivated");
                 }
             }
-        });
+            });
 
              
 

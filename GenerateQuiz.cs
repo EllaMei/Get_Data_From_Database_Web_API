@@ -51,17 +51,17 @@ internal partial class Program
                     }
                     else
                     {
-                        Console.WriteLine("\nERROR: Failed to generate the quiz. The response does not contain the expected/any quiz content.");
+                       return ErrorHandler("ERROR: Failed to generate the quiz. The response does not contain the expected/any quiz content.");
                     }
                 }
                 catch (Exception ex) // Handle the exception during deserialisation
                 {
-                    Console.WriteLine($"\nERROR: An error occurred during deserialization from OpenAI: {ex.Message}");
+                    return ErrorHandler($"ERROR: An error occurred during deserialization from OpenAI: {ex.Message}");
                 }
             }
             else // Response statuscocde indicates an error. Display the statuscode
             {
-                Console.WriteLine($"\nERROR: There was a problem communicating with the API. Status code: {responseStatusCode}");
+                return ErrorHandler($"ERROR: There was a problem communicating with the API. Status code: {responseStatusCode}");
             }
         }
 

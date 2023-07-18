@@ -32,7 +32,7 @@ internal partial class Program
             await connection.OpenAsync();
 
 
-            string SqlStatement = "UPDATE quiz_users SET  first_name = @FirstName, last_name = @LastName, password_hash = @Password WHERE login_id = @LoginId";
+            string SqlStatement = "UPDATE quiz_users SET  first_name = @FirstName, last_name = @LastName, password_hash = @Password WHERE login_id ILIKE @LoginId";
 
 
             // Create a new NpgsqlCommand object with the insert SQL statement and the database connection

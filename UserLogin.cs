@@ -7,10 +7,11 @@ internal partial class Program
     {
         try
         {
+            
             using NpgsqlConnection connection = new(connectionString);
             await connection.OpenAsync();
 
-            string SqlStatement = "SELECT password_hash, user_status FROM quiz_users WHERE login_id = @LoginId AND user_status = TRUE";
+            string SqlStatement = "SELECT password_hash, user_status FROM quiz_users WHERE login_id ILIKE @LoginId AND user_status = TRUE";
 
             using (NpgsqlCommand command = new NpgsqlCommand(SqlStatement, connection))
             {
@@ -34,6 +35,11 @@ internal partial class Program
                             // Login successful
                             return true;
                         }
+                    }
+                    //login ID does not exist
+                    else
+                    {
+                        return false;
                     }
                 }
             }

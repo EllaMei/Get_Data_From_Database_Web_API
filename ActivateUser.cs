@@ -13,7 +13,7 @@ internal partial class Program
             {
                 await connection.OpenAsync();
 
-                string SqlStatement = "UPDATE quiz_users SET user_status = TRUE WHERE login_id = @LoginId";
+                string SqlStatement = "UPDATE quiz_users SET user_status = TRUE WHERE login_id ILIKE @LoginId";
 
                 using (NpgsqlCommand command = new NpgsqlCommand(SqlStatement, connection))
                 {
