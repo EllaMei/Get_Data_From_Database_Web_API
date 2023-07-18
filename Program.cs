@@ -48,24 +48,43 @@ internal partial class Program
         //  Display specific user info. Using route parameters in the URL eg: http://localhost:5000/user/tateclinton
         app.MapGet("/user/{loginname}", (string loginname) => GetUserByLoginName(loginname, connectionString));
 
-        // Display specific user info. Using query parameters in the URL eg: http://localhost:5000/user?loginname=tateclinton
+        // Display specific user info. Using query parameters in the URL eg: http://localhost:5000/user?loginname=
         app.MapGet("/user", (string loginname) => GetUserByLoginName(loginname, connectionString));
 
  
-        //  Insert user to quiz users table. Using query parameters in the URL eg: http://localhost:5000/adduser?loginname=anhnguyen&firstname=anh&lastname=nguyen
+        //  Insert user to quiz users table. Using query parameters in the URL eg: http://localhost:5000/adduser?loginid=&firstname=&lastname=
         app.MapPost("/adduser", async (context) =>
         {
-            string? loginname = context.Request.Query["loginname"];
-            string? firstname = context.Request.Query["firstname"];
-            string? lastname = context.Request.Query["lastname"];
+            // Get the value of the "loginid" parameter from the request query string.
+            string? LoginId = context.Request.Query["login_id"];
 
-            string? result = null;
-            if (!string.IsNullOrEmpty(loginname) && !string.IsNullOrEmpty(firstname) && !string.IsNullOrEmpty(lastname))
+            // Get the value of the "firstname" parameter from the request query string.
+            string? FirstName = context.Request.Query["first_name"];
+
+            // Get the value of the "lastname" parameter from the request query string.
+            string? LastName = context.Request.Query["last_name"];
+
+            // Get the value of the "password" parameter from the request query string.
+            string? Password = context.Request.Query["password_hash"];
+
+            // Check if any of the required parameters (loginid, firstname, lastname) are missing or empty.
+            if (string.IsNullOrEmpty(LoginId) || string.IsNullOrEmpty(FirstName) || string.IsNullOrEmpty(LastName)|| string.IsNullOrEmpty(Password))
             {
+                // Set the HTTP response status code to 400 (Bad Request).
+                context.Response.StatusCode = 400;
 
-                result = await AddUser(loginname, firstname, lastname, connectionString);
+                // Write an error message to the response.
+                await context.Response.WriteAsync("One or more parameters are missing.");
+
+                // Exit the function early.
+                return;
             }
 
+            // Call the "AddUser" method, passing the "loginid", "firstname", "lastname", and "connectionString" parameters.
+            // Await the method's asynchronous execution and assign the returned value to "result".
+            string? result = await AddUser(LoginId, FirstName, LastName, Password,connectionString);
+
+            // Write the value of "result" to the response, or an empty string if "result" is null.
             await context.Response.WriteAsync(result ?? string.Empty);
         });
 
@@ -75,10 +94,10 @@ internal partial class Program
         // Return json of all questions and options eg: http://localhost:5000/getquiz
         app.MapGet("/getquiz", () => GetQuiz(connectionString));
 
-        // Return json of unattempted questions and options eg: http://localhost:5000/getnewquiz?loginname=fredkhan
+        // Return json of unattempted questions and options eg: http://localhost:5000/getnewquiz?loginname=
         app.MapGet("/getnewquiz", (string loginname) => GetNewQuiz(loginname, connectionString));
 
-        // Return json of attempted questions and options eg: http://localhost:5000/getnewquiz?loginname=fredkhan
+        // Return json of attempted questions and options eg: http://localhost:5000/getnewquiz?loginname=
         app.MapGet("/getoldquiz", (string loginname) => GetOldQuiz(loginname, connectionString));
 
 
@@ -86,7 +105,7 @@ internal partial class Program
         //  Display True or False. Using route parameters in the URL eg: http://localhost:5000/checkanswer/21/b
         app.MapGet("/checkanswer/{questionid}/{optionname}", (int questionid, char optionname) => CheckAnswer(questionid, Char.ToUpper(optionname), connectionString));
 
-        // Display True or False. Using query parameters in the url eg: http://localhost:5000/checkanswer?questionid=21&optionname=b
+        // Display True or False. Using query parameters in the url eg: http://localhost:5000/checkanswer?questionid=&optionname=
         app.MapGet("/checkanswer", (int questionid, char optionname) => CheckAnswer(questionid, Char.ToUpper(optionname), connectionString));
 
 
@@ -118,7 +137,7 @@ internal partial class Program
         });
 
 
-        //  Insert record to quiz history table and returns true or false. Using query parameters in the URL eg: http://localhost:5000/recordanswer?loginname=anhnguyen&questionid=11&optionname=d
+        //  Insert record to quiz history table and returns true or false. Using query parameters in the URL eg: http://localhost:5000/recordanswer?loginname=&questionid=&optionname=
         app.MapPost("/recordanswer", async (context) =>
         {
             string? loginname = context.Request.Query["loginname"];
@@ -142,6 +161,86 @@ internal partial class Program
         });
 
 
+
+
+        //  Update user to quiz users table. Using query parameters in the URL eg: http://localhost:5000/updateuser?login_id=&first_name=&last_name=&password_hash=
+            app.MapPut("/updateuser", async (context) =>
+            {
+            // Get the value of the "loginid" parameter from the request query string.
+            string? LoginId = context.Request.Query["login_id"];
+
+            // Get the value of the "firstname" parameter from the request query string.
+            string? FirstName = context.Request.Query["first_name"];
+
+            // Get the value of the "lastname" parameter from the request query string.
+            string? LastName = context.Request.Query["last_name"];
+
+            // Get the value of the "lastname" parameter from the request query string.
+            string? Password = context.Request.Query["password_hash"];
+
+            // Check if any of the required parameters (loginid, firstname, lastname) are missing or empty.
+            if (string.IsNullOrEmpty(LoginId)||string.IsNullOrEmpty(FirstName) || string.IsNullOrEmpty(LastName) || string.IsNullOrEmpty(Password))
+            {
+                // Set the HTTP response status code to 400 (Bad Request).
+                context.Response.StatusCode = 400;
+
+                // Write an error message to the response.
+                await context.Response.WriteAsync("One or more parameters are missing.");
+
+                // Exit the function early.
+                return;
+            }
+
+            // Call the "UpdateUser" method, passing the "loginid", "firstname", "lastname", and "connectionString" parameters.
+            // Await the method's asynchronous execution and assign the returned value to "result".
+            string? result = await UpdateUser( LoginId, FirstName, LastName, Password, connectionString);
+
+            // Write the value of "result" to the response, or an empty string if "result" is null.
+            await context.Response.WriteAsync(result ?? string.Empty);
+            });
+
+
+            //Activate users to get access to quiz http://localhost:5000/activateuserstatus?loginid=
+             app.MapPut("/activateuserstatus", (string LoginId) => ActivateUserStatus (LoginId ?? string.Empty,connectionString));
+
+
+
+           //UserLogin endpoint URL eg: http://localhost:5000/userlogin?/login_id=&password_hash=
+            app.MapPost("/userlogin", async(context) => 
+             {
+            //Get the value of the "LoginId"
+            string? LoginId = context.Request.Query["login_id"];
+
+            //Get the value of password
+            string? Password = context.Request.Query["password_hash"];
+            
+
+            //check if LoginId or password is Null or empty
+            if(string.IsNullOrEmpty(LoginId) || string.IsNullOrEmpty(Password))
+            {
+                context.Response.StatusCode = 400;
+                await context.Response.WriteAsync("Login ID or Password is missing");
+                return;
+            }
+
+            bool LoginSuccessful = await UserLogin(LoginId, Password,  connectionString);
+           
+
+            await context.Response.WriteAsync(LoginSuccessful ? "Login Successful" : "Login Failed");
+            
+
+            
+            if (!LoginSuccessful && LoginId !=null)
+            {
+                bool UserStatus = await GetUserStatus(LoginId, connectionString);
+                if (!UserStatus)
+                {
+                    await context.Response.WriteAsync("\nYour Account is deactivated");
+                }
+            }
+            });
+
+             
 
         app.Run();
     }

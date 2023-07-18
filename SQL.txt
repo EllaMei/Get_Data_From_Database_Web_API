@@ -13,3 +13,10 @@ SELECT questions.id, answers.answer_name FROM quiz_questions questions INNER JOI
 
 SELECT questions.id, answers.answer_name FROM quiz_questions questions INNER JOIN quiz_answers answers ON questions.id=@questionid = answers.id;
 
+Add Users 
+==========
+CREATE TABLE IF NOT EXISTS  quiz_users (login_id VARCHAR NOT NULL UNIQUE,
+                first_name VARCHAR NOT NULL,
+                last_name VARCHAR NOT NULL,
+                password_hash VARCHAR NOT NULL,
+                user_status BOOL DEFAULT FALSE);
