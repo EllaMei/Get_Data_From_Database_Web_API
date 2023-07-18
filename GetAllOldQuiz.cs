@@ -21,7 +21,7 @@ internal partial class Program
 																	  ON quiz_questions.id = quiz_history.question_id) 
                                                                 INNER JOIN quiz_options ON quiz_questions.id = quiz_options.id
 																INNER JOIN quiz_answers ON quiz_options.id = quiz_answers.id
-																WHERE (((quiz_history.question_id) Is Not Null))
+																WHERE (((quiz_history.question_id) Is Not Null) AND quiz_questions.duplicate IS NOT TRUE)
                                                                 ORDER BY id, option_name;", connection))
             {
                 command.Parameters.AddWithValue("@loginName", NpgsqlTypes.NpgsqlDbType.Text, loginname);
