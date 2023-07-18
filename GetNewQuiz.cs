@@ -15,7 +15,7 @@ internal partial class Program
                                                             FROM (quiz_questions LEFT JOIN (SELECT question_id FROM quiz_history WHERE login_name = @loginName)
                                                             AS quiz_history ON quiz_questions.id = quiz_history.question_id) 
                                                             INNER JOIN quiz_options ON quiz_questions.id = quiz_options.id
-                                                            WHERE (((quiz_history.question_id) Is Null));", connection))
+                                                            WHERE (((quiz_history.question_id) Is Null)) AND question_visible = TRUE;", connection))
             {
                 command.Parameters.AddWithValue("@loginName", NpgsqlTypes.NpgsqlDbType.Text, loginname);
                 // Send the command to execute and return the json format

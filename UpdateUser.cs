@@ -25,7 +25,9 @@ internal partial class Program
         LastName = char.ToUpper(LastName[0]) + (LastName.Substring(1)).ToLower();
 
         //Hash the password using bcrypt
-        string hashedPassword =BCrypt.Net.BCrypt.HashPassword(Password, BCrypt.Net.BCrypt.GenerateSalt(12)); 
+
+        string hashedPassword = BCrypt.Net.BCrypt.HashPassword(Password, BCrypt.Net.BCrypt.GenerateSalt(12));
+    
 
         using(NpgsqlConnection connection = new NpgsqlConnection(connectionString))
         {
