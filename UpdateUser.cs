@@ -26,7 +26,7 @@ internal partial class Program
 
         //Hash the password using bcrypt
         string hashedPassword =BCrypt.Net.BCrypt.HashPassword(Password, BCrypt.Net.BCrypt.GenerateSalt(12)); 
-        
+
         using(NpgsqlConnection connection = new NpgsqlConnection(connectionString))
         {
             await connection.OpenAsync();

@@ -7,7 +7,7 @@ SELECT questions.id, answers.answer_name FROM quiz_questions questions INNER JOI
 
 internal partial class Program
 {
-    public static async Task<string?> CheckAnswer(int questionid, char optionname, string connectionString)
+    public static async Task<string?> CheckAnswer(int question_id, char optionname, string connectionString)
     {
         using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
         {
@@ -17,7 +17,7 @@ internal partial class Program
                                                                 FROM quiz_questions questions 
                                                                 INNER JOIN quiz_answers answers ON @questionid = answers.id", connection))
             {
-                command.Parameters.AddWithValue("@questionid", NpgsqlTypes.NpgsqlDbType.Integer, questionid);
+                command.Parameters.AddWithValue("@questionid", NpgsqlTypes.NpgsqlDbType.Integer, question_id);
                 using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
                 {
                     if (reader.Read())
