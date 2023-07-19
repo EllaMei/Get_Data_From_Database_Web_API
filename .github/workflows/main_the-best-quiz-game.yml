@@ -53,5 +53,5 @@ jobs:
         with:
           app-name: 'The-Best-Quiz-Game'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_7BCA2B6BDA014164AC05926FA1E5A3CD }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_86A3653DF67A467A9944BCB8C8C09ACB }}
           package: .
