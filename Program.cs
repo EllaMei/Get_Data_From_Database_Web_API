@@ -103,33 +103,33 @@ internal partial class Program
 
  
         //  Display True or False. Using route parameters in the URL eg: http://localhost:5000/checkanswer/21/b
-        app.MapGet("/checkanswer/{question_id}/{optionname}", (int question_id, char optionname) => CheckAnswer(question_id, Char.ToUpper(optionname), connectionString));
+        app.MapGet("/checkanswer/{question_id}/{option_name}", (int question_id, char option_name) => CheckAnswer(question_id, Char.ToUpper(option_name), connectionString));
 
         // Display True or False. Using query parameters in the url eg: http://localhost:5000/checkanswer?questionid=&optionname=
-        app.MapGet("/checkanswer", (int question_id, char optionname) => CheckAnswer(question_id, Char.ToUpper(optionname), connectionString));
+        app.MapGet("/checkanswer", (int question_id, char option_name) => CheckAnswer(question_id, Char.ToUpper(option_name), connectionString));
 
 
 
         // Insert record to quiz history table and returns true or false. Using route parameters in the URL eg: http://localhost:5000/recordanswer/anhnguyen/11/d
         // The route spells out as follows: user / the question ID / the answer given for that question ID
-        app.MapPost("/recordanswer/{login_id}/{question_id}/{optionname}", async (context) =>
+        app.MapPost("/recordanswer/{login_id}/{question_id}/{option_name}", async (context) =>
         {
             string? login_id = context.Request.RouteValues["login_id"] as string;
 
-            //int questionid = int.Parse(context.Request.RouteValues["questionid"] as string);
+            //int questionid = int.Parse(context.Request.RouteValues["question_id"] as string);
             string? questionIdString = context.Request.RouteValues["question_id"] as string;
             int question_id = 0;
             int.TryParse(questionIdString, out question_id);
             
-            //char optionname = char.Parse(context.Request.RouteValues["optionname"] as string);
-            string? optionNameString = context.Request.RouteValues["optionname"] as string;
-            char optionname = !string.IsNullOrEmpty(optionNameString) ? optionNameString[0] : '\0';            
+            //char optionname = char.Parse(context.Request.RouteValues["option_name"] as string);
+            string? optionNameString = context.Request.RouteValues["option_name"] as string;
+            char option_name = !string.IsNullOrEmpty(optionNameString) ? optionNameString[0] : '\0';            
 
             //string? result = RecordAnswer(loginname, questionid, char.ToUpper(optionname), connectionString);
             string? result = null;
             if (login_id != null)
             {
-                result = await RecordAnswer(login_id, question_id, char.ToUpper(optionname), connectionString);
+                result = await RecordAnswer(login_id, question_id, char.ToUpper(option_name), connectionString);
             }
             
             //await context.Response.WriteAsync(result);
@@ -148,12 +148,12 @@ internal partial class Program
                 question_id = 0; // Assign a default value of 0 in case no question ID was supplied.
             }
 
-            string? optionname = context.Request.Query["optionname"].FirstOrDefault();
+            string? option_name = context.Request.Query["optionname"].FirstOrDefault();
 
             string? result = null;
             if (!string.IsNullOrEmpty(login_id))
             {
-                char optionChar = !string.IsNullOrEmpty(optionname) ? char.ToUpper(optionname[0]) : '\0';
+                char optionChar = !string.IsNullOrEmpty(option_name) ? char.ToUpper(option_name[0]) : '\0';
                 result = await RecordAnswer(login_id, question_id, optionChar, connectionString);
             }
 
@@ -205,7 +205,7 @@ internal partial class Program
 
 
 
-           //UserLogin endpoint URL eg: http://localhost:5000/userlogin?/login_id=&password_hash=
+           //UserLogin endpoint URL eg: http://localhost:5000/userlogin?login_id=&password_hash=
             app.MapPost("/userlogin", async(context) => 
              {
             //Get the value of the "LoginId"
