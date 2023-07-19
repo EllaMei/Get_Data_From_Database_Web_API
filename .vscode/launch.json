@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/bin/Debug/net7.0/Get_Data_From_Database_Web_API.dll",
+            "program": "${workspaceFolder}/bin/Debug/net7.0/The-Best-Quiz-Game.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
