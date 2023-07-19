@@ -40,7 +40,7 @@ internal partial class Program
             int prompt_ID = 0;
 
             // Insert Prompt Text into quiz_prompt table and retrieve the ID generated
-            using (NpgsqlCommand command = new NpgsqlCommand("INSERT INTO quiz_prompts (prompt_text) VALUES (@promptText) RETURNING id", connection))
+            using (NpgsqlCommand command = new NpgsqlCommand("INSERT INTO quiz_prompts (prompt_text) VALUES (@promptText) RETURNING prompt_id", connection))
             {
                 // Check if the prompt text is not null
                 if (prompt_Text is not null)
@@ -61,7 +61,7 @@ internal partial class Program
                 int question_ID = 0;
 
                 // Insert Questions into questions table and retrieve the ID generated
-                using (NpgsqlCommand command = new NpgsqlCommand("INSERT INTO quiz_questions (question_text, prompt_id) VALUES (@questionText, @promptID) RETURNING id", connection))
+                using (NpgsqlCommand command = new NpgsqlCommand("INSERT INTO quiz_questions (question_text, prompt_id) VALUES (@questionText, @promptID) RETURNING question_id", connection))
                 {
                     // Get Question value from JSON
                     JsonElement question = property.Value.GetProperty("Question");
@@ -82,7 +82,7 @@ internal partial class Program
 
 
                 // Insert Options into options table
-                using (NpgsqlCommand command = new NpgsqlCommand("INSERT INTO quiz_options (id, option_name, option_text) VALUES (@id, @optionName, @optionText)", connection))
+                using (NpgsqlCommand command = new NpgsqlCommand("INSERT INTO quiz_options (question_id, option_name, option_text) VALUES (@questionid, @optionName, @optionText)", connection))
                 {
                     // Get the value of the "Options" property from the JSON
                     JsonElement options = property.Value.GetProperty("Options");
@@ -93,7 +93,7 @@ internal partial class Program
                         string option_name = option.Name ?? "";
                         string option_text = option.Value.GetString()?.Replace("'", "\"") ?? "";
                         // Set the parameter values for the option ID, option name, and option text
-                        command.Parameters.AddWithValue("@id", NpgsqlTypes.NpgsqlDbType.Integer, question_ID);
+                        command.Parameters.AddWithValue("@questionid", NpgsqlTypes.NpgsqlDbType.Integer, question_ID);
                         command.Parameters.AddWithValue("@optionName", NpgsqlTypes.NpgsqlDbType.Char, option_name);
                         command.Parameters.AddWithValue("@optionText", NpgsqlTypes.NpgsqlDbType.Text, option_text);
                         // Execute the command to insert the option
@@ -103,14 +103,14 @@ internal partial class Program
                 }
 
                 // Insert Answer into answers table
-                using (NpgsqlCommand command = new NpgsqlCommand("INSERT INTO quiz_answers (id, answer_name) VALUES (@id, @answerName)", connection))
+                using (NpgsqlCommand command = new NpgsqlCommand("INSERT INTO quiz_answers (question_id, answer_name) VALUES (@questionid, @answerName)", connection))
                 {
                     // Get the value of the "Answer" property from the JSON
                     JsonElement answer = property.Value.GetProperty("Answer");
 
                     string answer_name = answer.GetString() ?? "";
                     // Set the parameter values for the answer ID and answer name
-                    command.Parameters.AddWithValue("@id", NpgsqlTypes.NpgsqlDbType.Integer, question_ID);
+                    command.Parameters.AddWithValue("@questionid", NpgsqlTypes.NpgsqlDbType.Integer, question_ID);
                     command.Parameters.AddWithValue("@answerName", NpgsqlTypes.NpgsqlDbType.Char, answer_name);
                     // Execute the command to insert the answer
                     command.ExecuteNonQuery();

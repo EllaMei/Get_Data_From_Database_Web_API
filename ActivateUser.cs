@@ -1,28 +1,47 @@
 using Npgsql;
 internal partial class Program
 {
-    public static async Task ActivateUserStatus(string LoginId, string connectionString)
+    public static async Task<string?> ActivateUserStatus(string LoginId, string connectionString)
     {
         try
         {
             if (string.IsNullOrEmpty(LoginId))
             {
-                ErrorHandler ("Login ID cannot be empty.");
+                return"Login ID cannot be empty.";
             }
-            using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+            using(NpgsqlConnection connection = new(connectionString))
+            {
+                await connection.OpenAsync();
+                string SqlStatement = "SELECT COUNT(*) As count FROM quiz_users WHERE login_id ILIKE @loginid";
+
+                using NpgsqlCommand Command = new(SqlStatement, connection);
+                Command.Parameters.AddWithValue("@loginid", NpgsqlTypes.NpgsqlDbType.Varchar, LoginId);
+
+
+                int count = Convert.ToInt32(await Command.ExecuteScalarAsync());
+                
+                // If no rows are found, return the "Login ID Does Not Exist" message
+                if (count == 0)
+                {
+                    return "Login ID Does Not Exist";
+                }
+            }
+            using (NpgsqlConnection connection = new(connectionString))
             {
                 await connection.OpenAsync();
 
                 string SqlStatement = "UPDATE quiz_users SET user_status = TRUE WHERE login_id ILIKE @LoginId";
 
-                using (NpgsqlCommand command = new NpgsqlCommand(SqlStatement, connection))
+                using (NpgsqlCommand command = new(SqlStatement, connection))
                 {
                     command.Parameters.AddWithValue("@LoginId", NpgsqlTypes.NpgsqlDbType.Varchar, LoginId);
 
                     await command.ExecuteNonQueryAsync();
                 }
             }
+            return string.Empty;
         }
+
         catch (NpgsqlException ex)
         {
             // Handle PostgreSQL-related exceptions

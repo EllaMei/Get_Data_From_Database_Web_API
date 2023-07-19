@@ -21,7 +21,7 @@ internal partial class Program
         // Data object to hold prompt, model, max_tokens, and temperature
 
         string json = JsonConvert.SerializeObject(data); // Serialize the data object to JSON
-
+            
         using (var client = new HttpClient()) // Create a new HttpClient
         {
             // Set the Authorization header
@@ -50,12 +50,12 @@ internal partial class Program
                 }
                 catch (Exception ex) // Handle the exception during deserialisation
                 {
-                    Console.WriteLine($"\nERROR: An error occurred during deserialization from OpenAI: {ex.Message}");
+                    ErrorHandler($"\nERROR: An error occurred during deserialization from OpenAI: {ex.Message}");
                 }
             }
             else // Response statuscocde indicates an error. Display the statuscode
             {
-                Console.WriteLine($"\nERROR: There was a problem communicating with the API. Status code: {responseStatusCode}");
+                ErrorHandler($"\nERROR: There was a problem communicating with the API. Status code: {responseStatusCode}");
             }
         }
 

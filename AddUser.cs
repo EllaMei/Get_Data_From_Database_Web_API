@@ -69,9 +69,9 @@ internal partial class Program
             // Create an anonymous object to store the response data
             var responseObject = new
             {
-                LoginID = LoginId,
-                FirstName = FirstName,
-                LastName = LastName
+                LoginId,
+                FirstName,
+                LastName
             };
 
             // Serialize the response object to JSON
