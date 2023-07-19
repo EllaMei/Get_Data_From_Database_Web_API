@@ -11,7 +11,7 @@ internal partial class Program
         Dictionary<string, string>? settings = GetSettings(); // Declare a dictionary variable to load and store the settings from Settings.user file
 
         // Create Connection String for NPGSQL
-        string connectionString = $"Host={settings["HOST"]};Username={settings["USERNAME"]};Password={pgsqlDbPassword};Database={settings["DATABASE"]}"; 
+        string connectionString = $"Host={settings["HOST"]};Username={settings["USERNAME"]};Password={settings["PASSWORD"]};Database={settings["DATABASE"]}"; 
 
         var app = builder.Build();
 
@@ -200,12 +200,14 @@ internal partial class Program
             });
 
 
-            //Activate users to get access to quiz http://localhost:5000/activateuserstatus?loginid=
+            //Activate users to get access to quiz http://localhost:5000/activateUserStatus?loginid=
              app.MapPut("/activateuserstatus", (string LoginId) => ActivateUserStatus (LoginId ?? string.Empty,connectionString));
 
+           
+           //UserLogin endpoint URL eg: http://localhost:5000/userlogin?login_id=&password_hash=
+           
+             //app.MapPost("/userlogin", (string LoginId, string Password) => UserLogin (LoginId ?? string.Empty, Password ?? string.Empty, connectionString));
 
-
-           //UserLogin endpoint URL eg: http://localhost:5000/userlogin?/login_id=&password_hash=
             app.MapPost("/userlogin", async(context) => 
              {
             //Get the value of the "LoginId"

@@ -41,9 +41,8 @@ internal partial class Program
                 {
                     dynamic result = JsonConvert.DeserializeObject(responseContent) ?? new System.Dynamic.ExpandoObject();
                     // Deserialize the response content as dynamic object, or use a new ExpandoObject if null
-
-                    Console.WriteLine("-------------------------------");
-                    Console.WriteLine($"Status code: {responseStatusCode}");
+                    ErrorHandler("-------------------------------");
+                    ErrorHandler($"Status code: {responseStatusCode}");
 
                     if (result.choices != null && result.choices.Count > 0 && result.choices[0].text != null) // Check generated quiz is present in result
                     {
