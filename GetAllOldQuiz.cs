@@ -12,17 +12,17 @@ internal partial class Program
             connection.Open(); // Open the database connection
             // TODO: Use parameter query for the NOT in not null
             // Define the SQL query to retrieve quiz data from the database
-            using (NpgsqlCommand command = new NpgsqlCommand(@"SELECT quiz_questions.id, quiz_questions.question_text, 
+            using (NpgsqlCommand command = new NpgsqlCommand(@"SELECT quiz_questions.question_id, quiz_questions.question_text, 
                                                                 quiz_options.option_name, quiz_options.option_text, quiz_history.option_name user_answer, quiz_answers.answer_name answer
                                                                 FROM (quiz_questions LEFT JOIN 
                                                                       (SELECT question_id, option_name FROM quiz_history 
-                                                                      WHERE login_name = @loginName)
+                                                                      WHERE login_id = @loginName)
                                                                 AS quiz_history 
-																	  ON quiz_questions.id = quiz_history.question_id) 
-                                                                INNER JOIN quiz_options ON quiz_questions.id = quiz_options.id
-																INNER JOIN quiz_answers ON quiz_options.id = quiz_answers.id
+																	  ON quiz_questions.question_id = quiz_history.question_id) 
+                                                                INNER JOIN quiz_options ON quiz_questions.question_id = quiz_options.question_id
+																INNER JOIN quiz_answers ON quiz_options.question_id = quiz_answers.question_id
 																WHERE (((quiz_history.question_id) Is Not Null) AND quiz_questions.duplicate IS NOT TRUE)
-                                                                ORDER BY id, option_name;", connection))
+                                                                ORDER BY question_id, option_name;", connection))
             {
                 command.Parameters.AddWithValue("@loginName", NpgsqlTypes.NpgsqlDbType.Text, login_id);
                 using (NpgsqlDataReader reader = command.ExecuteReader())

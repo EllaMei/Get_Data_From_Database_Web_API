@@ -70,33 +70,33 @@ internal partial class Program
 
  
         //  Display True or False. Using route parameters in the URL eg: http://localhost:5000/checkanswer/21/b
-        app.MapGet("/checkanswer/{questionid}/{optionname}", (int questionid, char optionname) => CheckAnswer(questionid, Char.ToUpper(optionname), connectionString));
+        app.MapGet("/checkanswer/{question_id}/{optionname}", (int question_id, char optionname) => CheckAnswer(question_id, Char.ToUpper(optionname), connectionString));
 
         // Display True or False. Using query parameters in the url eg: http://localhost:5000/checkanswer?questionid=&optionname=
-        app.MapGet("/checkanswer", (int questionid, char optionname) => CheckAnswer(questionid, Char.ToUpper(optionname), connectionString));
+        app.MapGet("/checkanswer", (int question_id, char optionname) => CheckAnswer(question_id, Char.ToUpper(optionname), connectionString));
 
 
 
         // Insert record to quiz history table and returns true or false. Using route parameters in the URL eg: http://localhost:5000/recordanswer/anhnguyen/11/d
         // The route spells out as follows: user / the question ID / the answer given for that question ID
-        app.MapPost("/recordanswer/{loginname}/{questionid}/{optionname}", async (context) =>
+        app.MapPost("/recordanswer/{login_id}/{question_id}/{optionname}", async (context) =>
         {
             string? loginname = context.Request.RouteValues["loginname"] as string;
 
             //int questionid = int.Parse(context.Request.RouteValues["questionid"] as string);
-            string? questionIdString = context.Request.RouteValues["questionid"] as string;
-            int questionid = 0;
-            int.TryParse(questionIdString, out questionid);
+            string? questionIdString = context.Request.RouteValues["question_id"] as string;
+            int question_id = 0;
+            int.TryParse(questionIdString, out question_id);
             
-            //char optionname = char.Parse(context.Request.RouteValues["optionname"] as string);
-            string? optionNameString = context.Request.RouteValues["optionname"] as string;
-            char optionname = !string.IsNullOrEmpty(optionNameString) ? optionNameString[0] : '\0';            
+            //char optionname = char.Parse(context.Request.RouteValues["option_name"] as string);
+            string? optionNameString = context.Request.RouteValues["option_name"] as string;
+            char option_name = !string.IsNullOrEmpty(optionNameString) ? optionNameString[0] : '\0';            
 
             //string? result = RecordAnswer(loginname, questionid, char.ToUpper(optionname), connectionString);
             string? result = null;
             if (loginname != null)
             {
-                result = await RecordAnswer(loginname, questionid, char.ToUpper(optionname), connectionString);
+                result = await RecordAnswer(login_id, question_id, char.ToUpper(optionname), connectionString);
             }
             
             //await context.Response.WriteAsync(result);
@@ -115,13 +115,13 @@ internal partial class Program
                 questionid = 0; // Assign a default value of 0 in case no question ID was supplied.
             }
 
-            string? optionname = context.Request.Query["optionname"].FirstOrDefault();
+            string? option_name = context.Request.Query["optionname"].FirstOrDefault();
 
             string? result = null;
             if (!string.IsNullOrEmpty(loginname))
             {
                 char optionChar = !string.IsNullOrEmpty(optionname) ? char.ToUpper(optionname[0]) : '\0';
-                result = await RecordAnswer(loginname, questionid, optionChar, connectionString);
+                result = await RecordAnswer(login_id, question_id, optionChar, connectionString);
             }
 
             await context.Response.WriteAsync(result ?? string.Empty);
