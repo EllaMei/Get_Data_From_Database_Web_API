@@ -3,17 +3,17 @@ using Npgsql;
 using BCrypt.Net;
 internal partial class Program
 {
-    public static async Task<string?> UpdateUser( string LoginId, string FirstName, string LastName, string Password, string connectionString)
+    public static async Task<dynamic> UpdateUser( string LoginId, string FirstName, string LastName, string Password, string connectionString)
     {
 
-         // Validate input parameters
-        if (string.IsNullOrEmpty(LoginId) || string.IsNullOrEmpty(FirstName) || string.IsNullOrEmpty(LastName) || string.IsNullOrEmpty(Password))
-        {
-            return "One or more parameters are missing";
-        }
+        // Check if any of the required parameters (loginid, firstname, lastname) are missing or empty.
+            if (string.IsNullOrEmpty(LoginId)||string.IsNullOrEmpty(FirstName) || string.IsNullOrEmpty(LastName) || string.IsNullOrEmpty(Password))
+            {
+            
+                return Results.Ok ("One or more parameters are missing.");
 
-
-
+            
+            }
         //convert the loginid to lowercase
         LoginId = LoginId.ToLower();
 
@@ -52,8 +52,8 @@ internal partial class Program
             var responseObject = new
             {
                 LoginID = LoginId,
-                FirstName,
-                LastName,
+                FirstName = FirstName,
+                LastName = LastName,
                 
             };
 

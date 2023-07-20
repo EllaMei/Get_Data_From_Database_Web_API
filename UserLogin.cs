@@ -1,61 +1,67 @@
 using Npgsql;
 using BCrypt.Net;
 
+
 internal partial class Program
 {
-    public static async Task<bool> UserLogin(string LoginId, string Password, string connectionString)
+    public static async Task<dynamic> UserLogin(string LoginId, string Password, string connectionString)
     {
+        if(string.IsNullOrEmpty(LoginId) || string.IsNullOrEmpty(Password))
+            {
+                return "Login ID or Password is missing.";
+            }
         try
         {
-            
-            using NpgsqlConnection connection = new(connectionString);
-            await connection.OpenAsync();
-
-            string SqlStatement = "SELECT password_hash, user_status FROM quiz_users WHERE login_id ILIKE @LoginId AND user_status = TRUE";
-
-            using (NpgsqlCommand command = new NpgsqlCommand(SqlStatement, connection))
+            //check if the user status is false
+            using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
             {
-                command.Parameters.AddWithValue("@LoginId", NpgsqlTypes.NpgsqlDbType.Varchar, LoginId);
+                await connection.OpenAsync();
+                string SqlStatement = "SELECT COUNT(*) As count FROM quiz_users WHERE NOT user_status  AND login_id ILIKE @loginid ";
 
-                using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
+                using (NpgsqlCommand Command = new(SqlStatement, connection))   
                 {
-                    if (reader.Read())
+                    Command.Parameters.AddWithValue("@loginid", NpgsqlTypes.NpgsqlDbType.Varchar, LoginId);  
+                    int count = Convert.ToInt32(await Command.ExecuteScalarAsync());
+                    if (count == 1) 
                     {
-                        string? hashedPassword = reader["password_hash"] as string;
-                        bool UserStatus = Convert.ToBoolean(reader["user_status"]);
-                        
-
-                        if (!UserStatus)
-                        {
-                            return  false;
-                        }
-
-                        if (hashedPassword != null && BCrypt.Net.BCrypt.Verify(Password, hashedPassword))
-                        {
-                            // Login successful
-                            return true;
-                        }
-                    }
-                    //login ID does not exist
-                    else
-                    {
-                        return false;
+                        return "Login ID is not active.";
                     }
                 }
             }
-        }
-        catch (NpgsqlException ex)
-        {
-            // Handle PostgreSQL-related exceptions
-            return ErrorHandler($"An error occurred during login: {ex.Message}");
-        }
-        catch (Exception ex)
-        {
-            // Handle other exceptions
-            return ErrorHandler($"An unexpected error occurred during login: {ex.Message}");
-        }
+            // At this point means the user is allowed to login or user_status is TRUE
+            using(NpgsqlConnection connection= new(connectionString))
+            {
+                await connection.OpenAsync();
+                string SqlStatement = "SELECT password_hash, user_status FROM quiz_users WHERE login_id ILIKE @LoginId AND user_status";
 
-        // Login failed
-        return false;
+                using (NpgsqlCommand command = new (SqlStatement, connection))
+                {
+                    command.Parameters.AddWithValue("@LoginId", NpgsqlTypes.NpgsqlDbType.Varchar, LoginId);
+                    using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
+                    {
+                        if (reader.Read())
+                        {
+                            string? hashedPassword = reader["password_hash"] as string;
+
+                            if (BCrypt.Net.BCrypt.Verify(Password, hashedPassword))
+                            {
+                                return Results.Ok("Login Successful.");
+                            }
+                            else
+                            {
+                               return Results.Ok("Your username or Password is incorrect.");
+                            }
+                        }
+                    }
+                }
+            }
+            return Results.Ok("No Record is Returned.");         
+        }
+         // End of UserLogin
+         catch (NpgsqlException ex)
+            {
+                // Handle PostgreSQL-related exceptions
+                return ErrorHandler($"An error occurred during login: {ex.Message}");
+            }
     }
 }
