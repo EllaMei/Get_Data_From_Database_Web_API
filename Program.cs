@@ -60,6 +60,8 @@ internal partial class Program
 
         // Return json of all questions and options eg: http://localhost:5000/getquiz
         app.MapGet("/getquiz", () => GetQuiz(connectionString));
+    // Return json of a questions and options eg: http://localhost:5000/getaquiz
+        app.MapGet("/getaquiz", () => GetaQuiz(connectionString));   
 
         // Return json of unattempted questions and options eg: http://localhost:5000/getnewquiz?loginname=
         app.MapGet("/getnewquiz", (string loginname) => GetNewQuiz(loginname, connectionString));
