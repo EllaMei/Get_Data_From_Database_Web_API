@@ -49,7 +49,7 @@ internal partial class Program
         {
             // Handle PostgreSQL-related exceptions
             // Log the exception, display an error message, or take appropriate actions based on your application's requirements
-            ErrorHandler($"An error occurred while disabling the user: {ex.Message}");
+            ErrorHandler($"An error occurred while deactivating the user: {ex.Message}");
             throw; // Re-throw the exception if necessary
         }
         

@@ -29,7 +29,7 @@ public static string? GetaQuiz(string connectionString)
     catch (NpgsqlException ex)
         {
              // Handle PostgreSQL-related exceptions
-            return ErrorHandler($"An error occurred during login: {ex.Message}");
+            return ErrorHandler($"An error occurred during getting a question: {ex.Message}");
         }
 }
 
